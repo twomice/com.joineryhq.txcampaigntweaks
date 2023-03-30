@@ -7,9 +7,17 @@ The extension is licensed under [GPL-3.0](LICENSE.txt).
 
 This extension provides the following customizations to standard CiviCRM features:
 
-* On any online contribution receipt, any "Groups" profile field will be omitted;
-  in this way the receipt never contains a list of the donor's subscribed groups,
+* On any online contribution receipt, any "Groups" profile field will be omitted.
+  In this way the receipt never contains a list of the donor's subscribed groups,
   even if those that the contact selected in the contribution form.
+* On emailed reports (i.e. api job.mail_report) where format is 'csv' or 'pdf',
+  the link to the report appearing in the email body will be replaced with a
+  back-end URL.  
+  Rationale: On WordPress, CiviCRM uses a front-end URL, which has these disadvantages:
+  * The front-end UI is surprising to users who typically access reports via the
+    back-end;
+  * If the user is not logged in, a front-end URL will simply display a fatal
+    permission-denied error; but on the back-end, WordPress will prompt for login.
 
 ## Requirements
 

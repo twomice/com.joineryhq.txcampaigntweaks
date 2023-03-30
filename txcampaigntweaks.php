@@ -23,12 +23,14 @@ function txcampaigntweaks_civicrm_alterReportVar($varType, &$var, $reportForm) {
 
 function txcampaigntweaks_civicrm_buildForm($formName, &$form) {
   // enable tracking feature
-  if (( $formName == 'CRM_Contribute_Form_Contribution_Main' ||
-    $formName == 'CRM_Contribute_Form_Contribution_Confirm' ||
-    $formName == 'CRM_Contribute_Form_Contribution_ThankYou' )) { 
+  if ((
+    $formName == 'CRM_Contribute_Form_Contribution_Main'
+    || $formName == 'CRM_Contribute_Form_Contribution_Confirm'
+    || $formName == 'CRM_Contribute_Form_Contribution_ThankYou'
+  )) {
 
     $contributionPageId = $form->_id;
-    	
+
     $ufJoinGet = civicrm_api3('UFJoin', 'get', [
       'sequential' => 1,
       'return' => ["uf_group_id"],
@@ -37,7 +39,7 @@ function txcampaigntweaks_civicrm_buildForm($formName, &$form) {
       'module' => "civicontribute",
     ]);
     $profileIds = CRM_Utils_Array::collect('uf_group_id', ($ufJoinGet['values'] ?? array()));
-    if  (!empty($profileIds)) {
+    if (!empty($profileIds)) {
       $ufFieldGet = civicrm_api3('UFField', 'get', [
         'sequential' => 1,
         'uf_group_id' => ['IN' => $profileIds],
@@ -48,9 +50,6 @@ function txcampaigntweaks_civicrm_buildForm($formName, &$form) {
     }
     // use the custom field ID and custom field label here
     $trackingFields = $groupFieldLabels;
-//      array('custom_4' => 'Campaign',
-//      'custom_5' => 'Appeal',
-//      'custom_6' => 'Fund');
     $form->assign('trackingFields', $trackingFields);
   }
 }

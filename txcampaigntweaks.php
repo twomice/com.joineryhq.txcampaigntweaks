@@ -6,6 +6,23 @@ use CRM_Txcampaigntweaks_ExtensionUtil as E;
 // phpcs:enable
 
 /**
+ * Implements hook_civicrm_dupeQuery().
+ */
+function txcampaigntweaks_civicrm_dupeQuery( $obj, $type, &$query ) {
+  if ($type == 'table' && $obj->contact_type == 'Individual') {
+    // For duplicate scans on Individuals, ensure we never include Public Officials
+    // in the results, because those contacts should never be merged.
+    $subTypeString = CRM_Utils_Array::implodePadded(['public_official']);
+    foreach ($query as &$sql) {
+      $sql .= "
+        inner join civicrm_contact c1 on subunion.id1 = c1.id and ifnull(c1.contact_sub_type, '') not like '%$subTypeString%'
+        inner join civicrm_contact c2 on subunion.id2 = c2.id and ifnull(c2.contact_sub_type, '') not like '%$subTypeString%'
+      ";
+    }
+  }
+}
+
+/**
  * Implements hook_civicrm_alterReportVar().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterReportVar

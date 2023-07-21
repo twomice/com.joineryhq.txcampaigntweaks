@@ -14,9 +14,17 @@ function txcampaigntweaks_civicrm_dupeQuery( $obj, $type, &$query ) {
     // in the results, because those contacts should never be merged.
     $subTypeString = CRM_Utils_Array::implodePadded(['public_official']);
     foreach ($query as &$sql) {
-      $sql .= "
-        inner join civicrm_contact c1 on subunion.id1 = c1.id and ifnull(c1.contact_sub_type, '') not like '%$subTypeString%'
-        inner join civicrm_contact c2 on subunion.id2 = c2.id and ifnull(c2.contact_sub_type, '') not like '%$subTypeString%'
+      // We expect every existing query will select id1, id2, and weight. So
+      // we can safely wrap that in a subquery and use inner joins to limit
+      // by contact_sub_type.
+      $sql = "
+        SELECT
+          q.id1,
+          q.id2,
+          q.weight
+        FROM ($sql) q
+          inner join civicrm_contact c1 on q.id1 = c1.id and ifnull(c1.contact_sub_type, '') not like '%$subTypeString%'
+          inner join civicrm_contact c2 on q.id2 = c2.id and ifnull(c2.contact_sub_type, '') not like '%$subTypeString%'
       ";
     }
   }

@@ -18,8 +18,6 @@ This extension provides the following customizations to standard CiviCRM feature
     back-end;
   * If the user is not logged in, a front-end URL will simply display a fatal
     permission-denied error; but on the back-end, WordPress will prompt for login.
-* For duplicate scans on Individuals, ensure we never include Public Officials
-  in the results, because those contacts should never be merged.
 
 ## Requirements
 

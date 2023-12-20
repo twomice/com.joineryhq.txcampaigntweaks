@@ -25,6 +25,12 @@ function txcampaigntweaks_civicrm_buildForm($formName, &$form) {
   // enable tracking feature
   if ((
     $formName == 'CRM_Contribute_Form_Contribution_Main'
+  )) {
+    CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/CRM_Contribute_Form_Contribution_Main.js');
+  }
+
+  if ((
+    $formName == 'CRM_Contribute_Form_Contribution_Main'
     || $formName == 'CRM_Contribute_Form_Contribution_Confirm'
     || $formName == 'CRM_Contribute_Form_Contribution_ThankYou'
   )) {

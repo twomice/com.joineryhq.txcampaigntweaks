@@ -18,6 +18,9 @@ This extension provides the following customizations to standard CiviCRM feature
     back-end;
   * If the user is not logged in, a front-end URL will simply display a fatal
     permission-denied error; but on the back-end, WordPress will prompt for login.
+  * To support CSS styles on 'healthyfutures' WordPress theme on Contribution
+    Pages, add class 'has-no-recur-section' to div#priceset where no recurring
+    options are offered on the page.
 
 ## Requirements
 

@@ -29,4 +29,8 @@
     <format>23.02.1</format>
   </civix>
   <upgrader>CRM_Txcampaigntweaks_Upgrader</upgrader>
+  <mixins>
+    <mixin>mgd-php@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.1</mixin>
+  </mixins>
 </extension>

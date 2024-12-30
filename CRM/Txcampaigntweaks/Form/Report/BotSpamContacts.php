@@ -9,7 +9,7 @@ class CRM_Txcampaigntweaks_Form_Report_BotSpamContacts extends CRM_Report_Form {
   protected $_customGroupExtends = array('Individual');
   protected $_customGroupGroupBy = FALSE;
 
-  function __construct() {
+  public function __construct() {
     $this->_columns = [
       'civicrm_contact' => [
         'dao' => 'CRM_Contact_DAO_Contact',
@@ -17,7 +17,6 @@ class CRM_Txcampaigntweaks_Form_Report_BotSpamContacts extends CRM_Report_Form {
           'sort_name' => [
             'title' => ts('Contact Name'),
             'required' => TRUE,
-//            'no_repeat' => TRUE,
           ],
           'first_name' => [
             'title' => ts('First Name'),
@@ -96,89 +95,89 @@ class CRM_Txcampaigntweaks_Form_Report_BotSpamContacts extends CRM_Report_Form {
     $this->_tagFilter = TRUE;
     parent::__construct();
   }
-  
+
   public function beginPostProcessCommon() {
     $candidateSql = "
-    select 
-      c.id, 
+    select
+      c.id,
       c.display_name
-    from 
+    from
       (
-        select 
-          l.* 
-        from 
-          civicrm_log l 
+        select
+          l.*
+        from
+          civicrm_log l
           inner join (
-            SELECT 
-              min(id) as first_id, 
-              entity_id 
-            FROM 
-              `civicrm_log` 
-            where 
-              entity_table = 'civicrm_contact' 
-            group by 
+            SELECT
+              min(id) as first_id,
               entity_id
-          ) t on t.first_id = l.id 
-        where 
+            FROM
+              `civicrm_log`
+            where
+              entity_table = 'civicrm_contact'
+            group by
+              entity_id
+          ) t on t.first_id = l.id
+        where
           l.modified_id = l.entity_id
-      ) self 
-      inner join civicrm_contact c on c.id = self.entity_id 
-      left join civicrm_address a on a.contact_id = c.id 
-      left join civicrm_phone ph on ph.contact_id = c.id 
-      left join civicrm_contribution ctr on ctr.contact_id = c.id 
-      left join civicrm_participant p on p.contact_id = c.id 
-      left join civicrm_entity_tag t on t.entity_table = 'civicrm_contact' 
-      and t.entity_id = c.id 
+      ) self
+      inner join civicrm_contact c on c.id = self.entity_id
+      left join civicrm_address a on a.contact_id = c.id
+      left join civicrm_phone ph on ph.contact_id = c.id
+      left join civicrm_contribution ctr on ctr.contact_id = c.id
+      left join civicrm_participant p on p.contact_id = c.id
+      left join civicrm_entity_tag t on t.entity_table = 'civicrm_contact'
+      and t.entity_id = c.id
       left join (
-        select 
-          contact_id_a as cid 
-        from 
-          civicrm_relationship 
-        union 
-        select 
-          contact_id_b as cid 
-        from 
+        select
+          contact_id_a as cid
+        from
           civicrm_relationship
-      ) rel on rel.cid = c.id 
+        union
+        select
+          contact_id_b as cid
+        from
+          civicrm_relationship
+      ) rel on rel.cid = c.id
       inner join (
-        select 
-          contact_id as cid, 
-          count(*) cnt 
-        from 
-          civicrm_email 
-        group by 
+        select
+          contact_id as cid,
+          count(*) cnt
+        from
+          civicrm_email
+        group by
           contact_id
-      ) e on c.id = e.cid 
-    where 
-      c.gender_id is null 
-      and ifnull(c.source, '') = '' 
-      and c.first_name not like '% %' 
-      and c.last_name not like '% %' 
-      and c.contact_type = 'individual' 
+      ) e on c.id = e.cid
+    where
+      c.gender_id is null
+      and ifnull(c.source, '') = ''
+      and c.first_name not like '% %'
+      and c.last_name not like '% %'
+      and c.contact_type = 'individual'
       and CAST(
         lower(c.first_name) AS BINARY
-      ) = CAST(c.first_name AS BINARY) 
+      ) = CAST(c.first_name AS BINARY)
       and CAST(
         lower(c.last_name) AS BINARY
-      ) = CAST(c.last_name AS BINARY) 
-      and a.id is null 
-      and ph.id is null 
-      and ctr.id is null 
-      and p.id is null 
-      and t.id is null 
-      and rel.cid is null 
+      ) = CAST(c.last_name AS BINARY)
+      and a.id is null
+      and ph.id is null
+      and ctr.id is null
+      and p.id is null
+      and t.id is null
+      and rel.cid is null
       and e.cnt = 1
 
-    ";    
-    
+    ";
+
     $this->createTemporaryTable('civireport_botspamcandidates_temp1', $candidateSql);
-    
+
     parent::beginPostProcessCommon();
-    
+
     $this->setBotScreeningRulesTplVar();
   }
-  
-  function setBotScreeningRulesTplVar() {
+
+  private function setBotScreeningRulesTplVar() {
     $botScreeningRules = [
       'F#1676-1' => '
         - no address, phone number, gender
@@ -192,16 +191,16 @@ class CRM_Txcampaigntweaks_Form_Report_BotSpamContacts extends CRM_Report_Form {
         - all-lowercase first name and last name
         - no spaces in first name or last name
         - contact type = "Individual"
-      '
+      ',
     ];
     $this->assign('botScreeningRules', $botScreeningRules);
   }
 
-  function from() {
+  public function from() {
     $this->_from = NULL;
 
     $this->_from = "
-      FROM 
+      FROM
         civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
         INNER JOIN {$this->temporaryTables['civireport_botspamcandidates_temp1']['name']} t on t.id = {$this->_aliases['civicrm_contact']}.id
     ";
@@ -212,7 +211,7 @@ class CRM_Txcampaigntweaks_Form_Report_BotSpamContacts extends CRM_Report_Form {
     }
   }
 
-  function alterDisplay(&$rows) {
+  public function alterDisplay(&$rows) {
     // custom code to alter rows
     $entryFound = FALSE;
     $checkList = array();
@@ -268,4 +267,5 @@ class CRM_Txcampaigntweaks_Form_Report_BotSpamContacts extends CRM_Report_Form {
       }
     }
   }
+
 }

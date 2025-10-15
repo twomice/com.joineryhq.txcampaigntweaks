@@ -154,12 +154,6 @@ class CRM_Txcampaigntweaks_Form_Report_BotSpamContacts extends CRM_Report_Form {
       and c.first_name not like '% %'
       and c.last_name not like '% %'
       and c.contact_type = 'individual'
-      and CAST(
-        lower(c.first_name) AS BINARY
-      ) = CAST(c.first_name AS BINARY)
-      and CAST(
-        lower(c.last_name) AS BINARY
-      ) = CAST(c.last_name AS BINARY)
       and a.id is null
       and ph.id is null
       and ctr.id is null
@@ -188,7 +182,6 @@ class CRM_Txcampaigntweaks_Form_Report_BotSpamContacts extends CRM_Report_Form {
         - no event records
         - no tags
         - no contact source
-        - all-lowercase first name and last name
         - no spaces in first name or last name
         - contact type = "Individual"
       ',

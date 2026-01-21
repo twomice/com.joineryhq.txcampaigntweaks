@@ -58,6 +58,22 @@ function txcampaigntweaks_civicrm_buildForm($formName, &$form) {
     $trackingFields = $groupFieldLabels;
     $form->assign('trackingFields', $trackingFields);
   }
+
+}
+
+/**
+ * Implements hook_civicrm_preProcess().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess/
+ */
+function txcampaigntweaks_civicrm_preProcess(string $formName, \CRM_Core_Form $form) {
+  if ($formName == 'CRM_Contribute_Form_Contribution') {
+    // Allow up to 30 soft credits to be entered in this form.
+    // (Note docs for CRM_Contribute_Form_Contribution::_softCreditItemCount, which
+    // say, "The value here is +1 the actual number of rows displayed".)
+    // Per https://joinery.freshdesk.com/helpdesk/tickets/1851
+    $form->_softCreditItemCount = 31;
+  }
 }
 
 /**

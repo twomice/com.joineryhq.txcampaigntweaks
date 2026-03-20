@@ -18,7 +18,7 @@
   <version>1.1.4</version>
   <develStage>stable</develStage>
   <compatibility>
-    <ver>5.38</ver>
+    <ver>5.51</ver>
   </compatibility>
   <comments>Developed by Joinery for The Texas Campaign to Prevent Teen Pregnancy</comments>
   <classloader>
@@ -26,11 +26,12 @@
   </classloader>
   <civix>
     <namespace>CRM/Txcampaigntweaks</namespace>
-    <format>23.02.1</format>
+    <format>25.10.2</format>
   </civix>
-  <upgrader>CRM_Txcampaigntweaks_Upgrader</upgrader>
+  <upgrader>CiviMix\Schema\Txcampaigntweaks\AutomaticUpgrader</upgrader>
   <mixins>
-    <mixin>mgd-php@1.0.0</mixin>
-    <mixin>smarty-v2@1.0.1</mixin>
+    <mixin>mgd-php@2.0.0</mixin>
+    <mixin>smarty-v2@1.0.3</mixin>
+    <mixin>scan-classes@1.0.0</mixin>
   </mixins>
 </extension>
